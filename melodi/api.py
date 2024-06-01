@@ -141,6 +141,18 @@ class MelodiClient:
 
         self._send_request(request_data=request_data)
 
+    def log_binary_sample(
+        self, experiment_id: int, response: str, title: Optional[str] = None
+    ) -> None:
+        sample = {"response": response, "title": title}
+        endpoint = f"{self.base_url}/{experiment_id}/samples?apiKey={self.api_key}"
+
+        try:
+            response = requests.post(endpoint, json=sample)
+            response.raise_for_status()
+        except MelodiAPIError as e:
+            raise MelodiAPIError(e)
+
     def make_shareable(self, experiment_id: int) -> Optional[str]:
         url = f"{self.base_url}/{experiment_id}/shareable-link?apiKey={self.api_key}"
         response = requests.post(url)
